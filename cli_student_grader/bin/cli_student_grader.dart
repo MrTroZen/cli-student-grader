@@ -1,6 +1,4 @@
-import 'dart:io';  
-
-// ==================== STEP 1: SETUP & CONSTANTS ====================
+import 'dart:io';
 
 const String appTitle = "Student Grader v1.0";
 
@@ -13,12 +11,8 @@ final Set<String> availableSubjects = {
 
 var students = <Map<String, dynamic>>[];
 
-// ==================== STEP 2: MENU LOOP ====================
-
 void main() {
-  // do-while loop: runs at least once and keeps showing the menu
   do {
-    // Multi-line string (triple quotes) with string interpolation
     print('''
 ===== $appTitle =====
 
@@ -31,51 +25,66 @@ void main() {
 7. Class Summary
 8. Exit
 
-Choose an option:''');
+Choose an option: ''');
 
-    // Read user input from terminal
     String? input = stdin.readLineSync();
     int choice = int.tryParse(input ?? '') ?? 0;
 
-    // switch statement routes the choice
     switch (choice) {
       case 1:
-        print("\n→ Option 1 selected: Add Student");
+        addStudent();
         break;
-
       case 2:
-        print("\n→ Option 2 selected: Record Score");
+        print("Record Score feature coming soon...");
         break;
-
       case 3:
-        print("\n→ Option 3 selected: Add Bonus Points");
+        print("Add Bonus Points feature coming soon...");
         break;
-
       case 4:
-        print("\n→ Option 4 selected: Add Comment");
+        print("Add Comment feature coming soon...");
         break;
-
       case 5:
-        print("\n→ Option 5 selected: View All Students");
+        print("View All Students feature coming soon...");
         break;
-
       case 6:
-        print("\n→ Option 6 selected: View Report Card");
+        print("View Report Card feature coming soon...");
         break;
-
       case 7:
-        print("\n→ Option 7 selected: Class Summary");
+        print("Class Summary feature coming soon...");
         break;
-
       case 8:
-        print("\nThank you for using $appTitle. Goodbye!");
-        return;   // exits the app
-
+        print("Thank you for using $appTitle. Goodbye!");
+        return;
       default:
-        print("\nInvalid option! Please choose a number between 1 and 8.");
+        print("Invalid option. Please choose a number between 1 and 8.");
     }
-
-    print("");   // empty line for clean output
-
   } while (true);
+}
+
+// ==================== STEP 3: ADD STUDENT ====================
+void addStudent() {
+
+  print("Enter student name:");
+  String? name = stdin.readLineSync()?.trim();
+
+  // Basic validation - name should not be empty
+  if (name == null || name.isEmpty) {
+    print("Error: Name cannot be empty.");
+    return;
+  }
+
+  // Create student Map with exact required structure
+  var student = <String, dynamic>{
+    "name": name,
+    "scores": <int>[],                    
+    "subjects": {...availableSubjects},   
+    "bonus": null,                        
+    "comment": null,                      
+  };
+
+  // Add to the main students list
+  students.add(student);
+
+  // Confirmation using string interpolation
+  print("Student '$name' added successfully!");
 }
