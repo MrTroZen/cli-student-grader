@@ -35,7 +35,7 @@ Choose an option: ''');
         addStudent();
         break;
       case 2:
-        print("Record Score feature coming soon...");
+        recordScore();
         break;
       case 3:
         print("Add Bonus Points feature coming soon...");
@@ -63,28 +63,86 @@ Choose an option: ''');
 
 // ==================== STEP 3: ADD STUDENT ====================
 void addStudent() {
-
   print("Enter student name:");
   String? name = stdin.readLineSync()?.trim();
 
-  // Basic validation - name should not be empty
   if (name == null || name.isEmpty) {
     print("Error: Name cannot be empty.");
     return;
   }
 
-  // Create student Map with exact required structure
   var student = <String, dynamic>{
     "name": name,
-    "scores": <int>[],                    
-    "subjects": {...availableSubjects},   
-    "bonus": null,                        
-    "comment": null,                      
+    "scores": <int>[],
+    "subjects": {...availableSubjects},
+    "bonus": null,
+    "comment": null,
   };
 
-  // Add to the main students list
   students.add(student);
-
-  // Confirmation using string interpolation
   print("Student '$name' added successfully!");
+}
+
+// ==================== STEP 4: RECORD SCORE ====================
+void recordScore() {
+  if (students.isEmpty) {
+    print("No students available. Please add a student first.");
+    return;
+  }
+
+  // Show numbered list of students using indexed for loop
+  print("Select a student:");
+  for (int i = 0; i < students.length; i++) {
+    print("${i + 1}. ${students[i]["name"]}");
+  }
+
+  // Get student choice
+  String? input = stdin.readLineSync();
+  int studentIndex = int.tryParse(input ?? '') ?? 0;
+
+  if (studentIndex < 1 || studentIndex > students.length) {
+    print("Invalid student selection.");
+    return;
+  }
+
+  // Get the selected student (0-based index)
+  var student = students[studentIndex - 1];
+
+  // Show available subjects
+  print("\nAvailable subjects:");
+  int subjectNum = 1;
+  for (var subject in student["subjects"]) {
+    print("$subjectNum. $subject");
+    subjectNum++;
+  }
+
+  // Get subject choice
+  input = stdin.readLineSync();
+  int subjectIndex = int.tryParse(input ?? '') ?? 0;
+
+  if (subjectIndex < 1 || subjectIndex > student["subjects"].length) {
+    print("Invalid subject selection.");
+    return;
+  }
+
+  // Get the actual subject name (using elementAt since it's a Set)
+  String subject = student["subjects"].elementAt(subjectIndex - 1);
+
+  // Validate score with while loop (must be 0-100)
+  int score;
+  while (true) {
+    print("Enter score for $subject (0-100):");
+    input = stdin.readLineSync();
+    score = int.tryParse(input ?? '') ?? -1;
+
+    if (score >= 0 && score <= 100) {
+      break; // valid score → exit while loop
+    }
+    print("Invalid score! Please enter a number between 0 and 100.");
+  }
+
+  // Add score to student's scores list
+  (student["scores"] as List<int>).add(score);
+
+  print("Score recorded successfully for ${student["name"]} in $subject: $score");
 }
