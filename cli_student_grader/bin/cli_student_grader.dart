@@ -317,12 +317,12 @@ void viewReportCard() {
 ╔════════════════════════════════════════════╗
 ║              REPORT CARD                   ║
 ╠════════════════════════════════════════════╣
-║ Name: ${student["name"]}                   
-║ Scores: $scores                          
-║ Bonus: ${student["bonus"] != null ? "+${student["bonus"]}" : "None"} 
-║ Average: ${finalAvg.toStringAsFixed(1)}    
-║ Grade: $grade                              
-║ Comment: $commentDisplay                   
+║ Name: ${student["name"]}                                  ║
+║ Scores: $scores                                 ║ 
+║ Bonus: ${student["bonus"] != null ? "+${student["bonus"]}" : "None"}                                ║
+║ Average: ${finalAvg.toStringAsFixed(1)}                               ║
+║ Grade: $grade                                   ║
+║ Comment: $commentDisplay               ║
 ╚════════════════════════════════════════════╝
 ''');
 
