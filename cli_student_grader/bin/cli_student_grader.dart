@@ -41,10 +41,10 @@ Choose an option: ''');
         addBonusPoints();
         break;
       case 4:
-        print("Add Comment feature coming soon...");
+        addComment();
         break;
       case 5:
-        print("View All Students feature coming soon...");
+        viewAllStudents();
         break;
       case 6:
         print("View Report Card feature coming soon...");
@@ -145,7 +145,6 @@ void addBonusPoints() {
     return;
   }
 
-  // Show students list
   print("Select a student to add bonus:");
   for (int i = 0; i < students.length; i++) {
     print("${i + 1}. ${students[i]["name"]}");
@@ -161,13 +160,11 @@ void addBonusPoints() {
 
   var student = students[studentIndex - 1];
 
-  // Check if bonus already exists using if-else
   if (student["bonus"] != null) {
     print("Bonus already set for ${student["name"]}. Current bonus: ${student["bonus"]}");
     return;
   }
 
-  // Prompt for bonus value (1-10)
   print("Enter bonus points (1-10):");
   input = stdin.readLineSync();
   int bonusValue = int.tryParse(input ?? '') ?? 0;
@@ -177,8 +174,73 @@ void addBonusPoints() {
     return;
   }
 
-  // Null-aware assignment: only assigns if current value is null
   student["bonus"] ??= bonusValue;
 
   print("Bonus of +$bonusValue added for ${student["name"]}");
+}
+
+// ==================== STEP 6: ADD COMMENT ====================
+void addComment() {
+  if (students.isEmpty) {
+    print("No students available. Please add a student first.");
+    return;
+  }
+
+  print("Select a student to add comment:");
+  for (int i = 0; i < students.length; i++) {
+    print("${i + 1}. ${students[i]["name"]}");
+  }
+
+  String? input = stdin.readLineSync();
+  int studentIndex = int.tryParse(input ?? '') ?? 0;
+
+  if (studentIndex < 1 || studentIndex > students.length) {
+    print("Invalid student selection.");
+    return;
+  }
+
+  var student = students[studentIndex - 1];
+
+  print("Enter comment for ${student["name"]}:");
+  String? comment = stdin.readLineSync()?.trim();
+
+  if (comment == null || comment.isEmpty) {
+    print("Comment cannot be empty.");
+    return;
+  }
+
+  student["comment"] = comment;
+
+  print("Comment added successfully for ${student["name"]}");
+}
+
+// ==================== STEP 7: VIEW ALL STUDENTS ====================
+void viewAllStudents() {
+  if (students.isEmpty) {
+    print("No students available.");
+    return;
+  }
+
+  print("\n=== All Students ===");
+
+  // for-in loop to iterate over students (required concept)
+  for (var student in students) {
+    // Collection if inside list literal (required)
+    var tags = [
+      student["name"],
+      "${student["scores"].length} scores",
+      if (student["bonus"] != null) "⭐ Has Bonus",
+    ];
+
+    // Join tags with " | " for clean output
+    print(tags.join(" | "));
+
+    // Safe comment display using ?. and ?? (required null-aware operators)
+    String commentDisplay = student["comment"]?.toUpperCase() ?? "No comment provided";
+    if (commentDisplay != "No comment provided") {
+      print("   Comment: $commentDisplay");
+    }
+  }
+
+  print("====================\n");
 }
