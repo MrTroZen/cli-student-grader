@@ -47,7 +47,7 @@ Choose an option: ''');
         viewAllStudents();
         break;
       case 6:
-        print("View Report Card feature coming soon...");
+        viewReportCard();
         break;
       case 7:
         print("Class Summary feature coming soon...");
@@ -223,19 +223,15 @@ void viewAllStudents() {
 
   print("\n=== All Students ===");
 
-  // for-in loop to iterate over students (required concept)
   for (var student in students) {
-    // Collection if inside list literal (required)
     var tags = [
       student["name"],
       "${student["scores"].length} scores",
       if (student["bonus"] != null) "⭐ Has Bonus",
     ];
 
-    // Join tags with " | " for clean output
     print(tags.join(" | "));
 
-    // Safe comment display using ?. and ?? (required null-aware operators)
     String commentDisplay = student["comment"]?.toUpperCase() ?? "No comment provided";
     if (commentDisplay != "No comment provided") {
       print("   Comment: $commentDisplay");
@@ -243,4 +239,86 @@ void viewAllStudents() {
   }
 
   print("====================\n");
+}
+
+// ==================== STEP 8: VIEW REPORT CARD ====================
+void viewReportCard() {
+  if (students.isEmpty) {
+    print("No students available. Please add a student first.");
+    return;
+  }
+
+  // Show students list
+  print("Select a student for report card:");
+  for (int i = 0; i < students.length; i++) {
+    print("${i + 1}. ${students[i]["name"]}");
+  }
+
+  String? input = stdin.readLineSync();
+  int studentIndex = int.tryParse(input ?? '') ?? 0;
+
+  if (studentIndex < 1 || studentIndex > students.length) {
+    print("Invalid student selection.");
+    return;
+  }
+
+  var student = students[studentIndex - 1];
+
+  // Calculate average using for loop (required)
+  List<int> scores = student["scores"] as List<int>;
+  double rawAvg = 0;
+  if (scores.isNotEmpty) {
+    int sum = 0;
+    for (int score in scores) {   // for-in loop for sum
+      sum += score;
+    }
+    rawAvg = sum / scores.length;
+  }
+
+  // Add bonus if exists using ?? 
+  double finalAvg = rawAvg + (student["bonus"] ?? 0);
+  if (finalAvg > 100) finalAvg = 100;   // Cap at 100
+
+  // Determine grade using if / else if (required)
+  String grade;
+  if (finalAvg >= 90) {
+    grade = "A";
+  } else if (finalAvg >= 80) {
+    grade = "B";
+  } else if (finalAvg >= 70) {
+    grade = "C";
+  } else if (finalAvg >= 60) {
+    grade = "D";
+  } else {
+    grade = "F";
+  }
+
+  // Switch expression with pattern matching for feedback (required)
+  String feedback = switch (grade) {
+    "A" => "Outstanding performance!",
+    "B" => "Good work, keep it up!",
+    "C" => "Satisfactory. Room to improve.",
+    "D" => "Needs improvement.",
+    "F" => "Failing. Please seek help.",
+    _   => "Unknown grade.",
+  };
+
+  // Safe comment display
+  String commentDisplay = student["comment"]?.toUpperCase() ?? "No comment provided";
+
+  // Formatted Report Card using multi-line string + interpolation
+  print('''
+╔════════════════════════════════════════════╗
+║              REPORT CARD                   ║
+╠════════════════════════════════════════════╣
+║ Name: ${student["name"]}                   
+║ Scores: $scores                          
+║ Bonus: ${student["bonus"] != null ? "+${student["bonus"]}" : "None"} 
+║ Average: ${finalAvg.toStringAsFixed(1)}    
+║ Grade: $grade                              
+║ Comment: $commentDisplay                   
+╚════════════════════════════════════════════╝
+''');
+
+  print("Feedback: $feedback\n");
 }
