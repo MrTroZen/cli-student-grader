@@ -50,7 +50,7 @@ Choose an option: ''');
         viewReportCard();
         break;
       case 7:
-        print("Class Summary feature coming soon...");
+        classSummary();
         break;
       case 8:
         print("Thank you for using $appTitle. Goodbye!");
@@ -59,6 +59,19 @@ Choose an option: ''');
         print("Invalid option. Please choose a number between 1 and 8.");
     }
   } while (true);
+}
+
+// ==================== HELPER FUNCTION: CALCULATE AVERAGE ====================
+double calculateAvg(Map<String, dynamic> student) {
+  List<int> scores = student["scores"] as List<int>;
+  if (scores.isEmpty) return 0.0;
+
+  int sum = 0;
+  for (int score in scores) {
+    sum += score;
+  }
+  double avg = sum / scores.length;
+  return avg + (student["bonus"] ?? 0);
 }
 
 // ==================== STEP 3: ADD STUDENT ====================
@@ -248,7 +261,6 @@ void viewReportCard() {
     return;
   }
 
-  // Show students list
   print("Select a student for report card:");
   for (int i = 0; i < students.length; i++) {
     print("${i + 1}. ${students[i]["name"]}");
@@ -264,22 +276,19 @@ void viewReportCard() {
 
   var student = students[studentIndex - 1];
 
-  // Calculate average using for loop (required)
   List<int> scores = student["scores"] as List<int>;
   double rawAvg = 0;
   if (scores.isNotEmpty) {
     int sum = 0;
-    for (int score in scores) {   // for-in loop for sum
+    for (int score in scores) {
       sum += score;
     }
     rawAvg = sum / scores.length;
   }
 
-  // Add bonus if exists using ?? 
   double finalAvg = rawAvg + (student["bonus"] ?? 0);
-  if (finalAvg > 100) finalAvg = 100;   // Cap at 100
+  if (finalAvg > 100) finalAvg = 100;
 
-  // Determine grade using if / else if (required)
   String grade;
   if (finalAvg >= 90) {
     grade = "A";
@@ -293,7 +302,6 @@ void viewReportCard() {
     grade = "F";
   }
 
-  // Switch expression with pattern matching for feedback (required)
   String feedback = switch (grade) {
     "A" => "Outstanding performance!",
     "B" => "Good work, keep it up!",
@@ -303,10 +311,8 @@ void viewReportCard() {
     _   => "Unknown grade.",
   };
 
-  // Safe comment display
   String commentDisplay = student["comment"]?.toUpperCase() ?? "No comment provided";
 
-  // Formatted Report Card using multi-line string + interpolation
   print('''
 ╔════════════════════════════════════════════╗
 ║              REPORT CARD                   ║
@@ -321,4 +327,63 @@ void viewReportCard() {
 ''');
 
   print("Feedback: $feedback\n");
+}
+
+// ==================== STEP 9: CLASS SUMMARY ====================
+void classSummary() {
+  if (students.isEmpty) {
+    print("No students in class yet.");
+    return;
+  }
+
+  int totalStudents = students.length;
+  int passCount = 0;
+  double totalAvgSum = 0;
+  double highestAvg = 0;
+  double lowestAvg = 100;
+  var uniqueGrades = <String>{};   // Set to track unique grades
+
+  for (var student in students) {
+    double avg = calculateAvg(student);
+
+    // Logical operators (&&) - required
+    if (student["scores"].isNotEmpty && avg >= 60) {
+      passCount++;
+    }
+
+    totalAvgSum += avg;
+
+    if (avg > highestAvg) highestAvg = avg;
+    if (avg < lowestAvg) lowestAvg = avg;
+
+    // Calculate grade and add to Set (unique grades)
+    String grade;
+    if (avg >= 90) grade = "A";
+    else if (avg >= 80) grade = "B";
+    else if (avg >= 70) grade = "C";
+    else if (avg >= 60) grade = "D";
+    else grade = "F";
+
+    uniqueGrades.add(grade);
+  }
+
+  double classAverage = totalAvgSum / totalStudents;
+
+  // Collection for - required
+  var summaryLines = [
+    for (var s in students) "${s["name"]}: ${calculateAvg(s).toStringAsFixed(1)}"
+  ];
+
+  print("\n=== CLASS SUMMARY ===");
+  print("Total Students     : $totalStudents");
+  print("Class Average      : ${classAverage.toStringAsFixed(1)}");
+  print("Highest Average    : ${highestAvg.toStringAsFixed(1)}");
+  print("Lowest Average     : ${lowestAvg.toStringAsFixed(1)}");
+  print("Students Passing   : $passCount");
+  print("Unique Grades      : ${uniqueGrades.join(", ")}");
+  print("\nStudent Averages:");
+  for (var line in summaryLines) {
+    print("  • $line");
+  }
+  print("=====================\n");
 }
