@@ -38,7 +38,7 @@ Choose an option: ''');
         recordScore();
         break;
       case 3:
-        print("Add Bonus Points feature coming soon...");
+        addBonusPoints();
         break;
       case 4:
         print("Add Comment feature coming soon...");
@@ -90,13 +90,11 @@ void recordScore() {
     return;
   }
 
-  // Show numbered list of students using indexed for loop
   print("Select a student:");
   for (int i = 0; i < students.length; i++) {
     print("${i + 1}. ${students[i]["name"]}");
   }
 
-  // Get student choice
   String? input = stdin.readLineSync();
   int studentIndex = int.tryParse(input ?? '') ?? 0;
 
@@ -105,10 +103,8 @@ void recordScore() {
     return;
   }
 
-  // Get the selected student (0-based index)
   var student = students[studentIndex - 1];
 
-  // Show available subjects
   print("\nAvailable subjects:");
   int subjectNum = 1;
   for (var subject in student["subjects"]) {
@@ -116,7 +112,6 @@ void recordScore() {
     subjectNum++;
   }
 
-  // Get subject choice
   input = stdin.readLineSync();
   int subjectIndex = int.tryParse(input ?? '') ?? 0;
 
@@ -125,10 +120,8 @@ void recordScore() {
     return;
   }
 
-  // Get the actual subject name (using elementAt since it's a Set)
   String subject = student["subjects"].elementAt(subjectIndex - 1);
 
-  // Validate score with while loop (must be 0-100)
   int score;
   while (true) {
     print("Enter score for $subject (0-100):");
@@ -136,13 +129,56 @@ void recordScore() {
     score = int.tryParse(input ?? '') ?? -1;
 
     if (score >= 0 && score <= 100) {
-      break; // valid score → exit while loop
+      break;
     }
     print("Invalid score! Please enter a number between 0 and 100.");
   }
 
-  // Add score to student's scores list
   (student["scores"] as List<int>).add(score);
-
   print("Score recorded successfully for ${student["name"]} in $subject: $score");
+}
+
+// ==================== STEP 5: ADD BONUS POINTS ====================
+void addBonusPoints() {
+  if (students.isEmpty) {
+    print("No students available. Please add a student first.");
+    return;
+  }
+
+  // Show students list
+  print("Select a student to add bonus:");
+  for (int i = 0; i < students.length; i++) {
+    print("${i + 1}. ${students[i]["name"]}");
+  }
+
+  String? input = stdin.readLineSync();
+  int studentIndex = int.tryParse(input ?? '') ?? 0;
+
+  if (studentIndex < 1 || studentIndex > students.length) {
+    print("Invalid student selection.");
+    return;
+  }
+
+  var student = students[studentIndex - 1];
+
+  // Check if bonus already exists using if-else
+  if (student["bonus"] != null) {
+    print("Bonus already set for ${student["name"]}. Current bonus: ${student["bonus"]}");
+    return;
+  }
+
+  // Prompt for bonus value (1-10)
+  print("Enter bonus points (1-10):");
+  input = stdin.readLineSync();
+  int bonusValue = int.tryParse(input ?? '') ?? 0;
+
+  if (bonusValue < 1 || bonusValue > 10) {
+    print("Bonus must be between 1 and 10.");
+    return;
+  }
+
+  // Null-aware assignment: only assigns if current value is null
+  student["bonus"] ??= bonusValue;
+
+  print("Bonus of +$bonusValue added for ${student["name"]}");
 }
